@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Narrow&display=swap');
+
+body {
+    font-family: 'PT Sans Narrow', sans-serif;
+    font-size: 15px;
+}
+
+#footerSeparator {
+    margin-top: 25% !important;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgb(242, 242, 242);
+}
+
+.separator {
+    margin-top: 2% !important;
+    border-top-style: none;
+}
+
+#divFooter {
+    font-family: 'Open Sans', sans-serif;
+    background-color: white;
+    color: rgb(180, 173, 173);
+    padding-top: 32px;
+    line-height: 23px;
+    font-size: 12px;
+    text-transform: none;
+    background-repeat: repeat repeat;
+}
+
+#divFooter a {
+    color: #029f5b;
+}
+
+#divFooter h3 {
+    color: rgb(180, 173, 173);
+}
+
+
+@media (max-width: 767px) {
+
+    #divFooter {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    #divFooter {
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    body > #footerSeparator {
+        margin-left: -20px;
+        margin-right: -20px;
+        margin-bottom: 45px;
+    }
+}
+
+.btn-top {
+    padding-top: 5% !important;
+}
+
+.main-functional {
+    text-align: center;
+    margin-top: 100px;
+}
+
+.container-of-forms {
+    margin: 50px;
+}
+
+.nav-tabs {
+    font-size: 15px;
+    padding: 10px;
+}
+
+#result-of-assessment1 {
+    padding-left: 60px;
+}
+
+#result-of-assessment2 {
+    margin-top: 50px;
+}
+
+.box {
+    margin: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    font-size: 30px;
+}
+
+#map {
+    height: 550px; /* The height is 400 pixels */
+    border-radius: 15px;
+}
+
+.text1 {
+    margin: 50px 50px 50px 27px;
+    /*text-align: center;*/
+}
+
+.text2 {
+    margin: 50px 10px 50px 51px;
+    /*text-align: center;*/
+}
+
+.header img {
+    float: left;
+    margin-top: 25px;
+    margin-right: 10px;
+    width: 55px;
+    height: 55px;
+}
+
+.header h2 {
+    position: relative;
+    top: 18px;
+    left: 10px;
+}
+
+a {
+    color: #000000;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #000000;
+    text-decoration: none;
+}
+
+.header-row {
+    margin-left: 170px;
+}

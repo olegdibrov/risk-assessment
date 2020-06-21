@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta name="description" content="spring-boot thymeleaf | home ">
+    <div th:replace="fragments/header :: header-css"></div>
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/site.css}"/>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="row header">
+        <div class="row header-row">
+            <a href="/">
+                <img src="icons/logo.png">
+                <h2>Оцінка ризику здоров'я населення від забруднення атмосферного повітря</h2>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-functional row">
+
+        <div id="map" class="col-md-8">
+        </div>
+        <div class="row">
+            <div class="row">
+                <div class="col-md-3 text1">
+                    <img src="icons/calculator.png" width="70px">
+                    <a th:href="@{/calculator}">Оцінка ризику</a>
+                </div>
+                <div class="col-md-3 text2">
+                    <img src="icons/database.png" width="70px">
+                    <a th:href="@{/admin}">Огляд речовин в БД</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+<footer>
+    <div class="separator" th:replace="fragments/footer :: footer"></div>
+</footer>
+
+<script>
+    function initMap() {
+        // The location of Uluru
+        var uluru = {lat: 50.431782, lng: 30.516382};
+        var map = new google.maps.Map(
+            document.getElementById('map'), {zoom: 5, center: uluru});
+
+        var kyiv = formHTML2("Київська область", 53.7, 61.3, 50.9, 4691.5, 2183.2, 3021.6);
+        var vinnitsa = formHTML2("Вінницька область", 21.8, 131.0, 1078.2, 52537.3, 7167.1, 10861.3);
+        var volunska = formHTML("Волинська область", 11.3, 56.0, 105.6, 309.5, 1416.6, 1086.7);
+        var dnipro = formHTML2("Дніпропетровська  область", 691.6, 2984.0, 920.8, 48167.5, 303402.6, 128167.3);
+        var donetsk = formHTML2("Донецька  область", 3350.0, 441.6, 173.5, 222754.1, 293897.1, 132904.1);
+        var zhytomyr = formHTML2("Житомирська область", 14.1, 6.9, 455.5, 735.1, 2344.6, 3492.6);
+        var zakarp = formHTML2("Закарпатська область", 1.1, 26.0, 3.1, 158.2, 1267.6, 758.3);
+        var zaporiz = formHTML2("Запорізька область", 534.0, 112.4, 284.4, 76798.5, 53097.1, 749.5);
+        var ivanofr = formHTML2("Івано-Франківська  область", 50.5, 751.4, 338.2, 136079.2, 4086.5, 8087.1);
+        var kirov = formHTML2("Кіровоградська область", 283.7, 39.8, 209.7, 814.3, 2783.7, 2131.1);
+        var lugan = formHTML2("Луганська область", 13.7, 31.9, 260.9, 9893.3, 11168.9, 1998.3);
+        var lviv = formHTML2("Львівська область", 38.1, 168.2, 360.1, 25382.8, 4373.9, 44122.7);
+        var mukolaiv = formHTML2("Миколаївська область", 277.6, 55.1, 145.9, 482.3, 1669.9, 3019.1);
+        var odessa = formHTML2("Одеська  область", 77.4, 38.6, 1156.6, 1482.8, 3713.0, 19312.7);
+        var poltav = formHTML2("Полтавська область", 58.3, 67.5, 803.3, 3654.7, 11584.3, 6113.2);
+        var riven = formHTML2("Рівненська область", 8.8, 1427.8, 268.9, 385.7, 1329.4, 612.2);
+        var summu = formHTML2("Сумська область", 55.9, 32.2, 391.9, 3208.8, 5789.6, 4549.8);
+        var ternopil = formHTML2("Тернопільська область", 5.1, 37.4, 769.2, 422.7, 1682.0, 3696.2);
+        var kharkiv = formHTML2("Харківська область", 69.3, 151.2, 248.4, 41401.2, 13952.1, 14773.1);
+        var herson = formHTML2("Херсонська область", 2.4, 5.9, 141.2, 644.5, 783.1, 14367.9);
+        var hmelnitsk = formHTML2("Хмельницька область", 33.4, 85.7, 663.2, 2210.2, 6038.5, 1844.3);
+        var cherkas = formHTML2("Черкаська область", 19.0, 57.7, 5766.7, 5089.6, 2657.8, 18332.6);
+        var chernihivska = formHTML2("Чернігівська область", 6.6, 23.5, 2510.3, 5158.5, 2433.2, 9231.0);
+
+
+        createMarker(50.431782, 30.516382, kyiv, map);
+        createMarker(49.234824, 28.399594, vinnitsa, map);
+        createMarker(48.002777, 37.805279, donetsk, map);
+        createMarker(48.450001, 34.983334, dnipro, map);
+        createMarker(49.842957, 24.031111, lviv, map);
+        createMarker(49.553516, 25.594767, ternopil, map);
+        createMarker(49.988358, 36.232845, kharkiv, map);
+        createMarker(46.469391, 30.740883, odessa, map);
+        createMarker(50.619900, 26.251617, riven, map);
+        createMarker(49.444431, 32.059769, cherkas, map);
+        createMarker(49.589542, 34.551273, poltav, map);
+        createMarker(50.267975, 28.603677, zhytomyr, map);
+        createMarker(48.496544, 22.821226, zakarp, map);
+        createMarker(47.856374, 35.035270, zaporiz, map);
+        createMarker(48.911824, 24.682109, ivanofr, map);
+        createMarker(48.518858, 32.145623, kirov, map);
+        createMarker(48.580206, 39.216884, lugan, map);
+        createMarker(46.933213, 31.867913, mukolaiv, map);
+        createMarker(50.900752, 34.744174, summu, map);
+        createMarker(49.410642, 26.925218, hmelnitsk, map);
+        createMarker(46.649668, 32.537741, herson, map);
+        createMarker(51.495866, 31.2204989, chernihivska, map);
+
+    }
+
+    function formHTML(region, v1, v2, v3, v4, v5, v6) {
+        return '<div id="content">' +
+            '<div id="siteNotice">' +
+            '</div>' +
+            '<h3 id="firstHeading" class="firstHeading">' + region + '</h3>' +
+            '<div id="bodyContent d1" style="text-align: left">' +
+            '<p><b>Викиди в атмосферне повітря за 2019 рік</b></p>' +
+            '<div class="d1">' +
+            '<table class="tableizer-table">' +
+            '<thead><tr class="tableizer-firstrow"><th>Речовини</th><th>Кількисть викидів (т)</th></tr></thead><tbody>' +
+            '<tr><td>метали</td><td>' + v1 + '</td></tr>' +
+            '<tr><td>оксид азоту</td><td>' + v2 + '</td></tr>' +
+            '<tr><td>аміак</td><td>' + v3 + '</td></tr>' +
+            '<tr><td>діоксид сірки</td><td>' + v4 + '</td></tr>' +
+            '<tr><td>оксид вуглецю</td><td>' + v5 + '</td></tr>' +
+            '<tr><td>метан</td><td>' + v6 + '</td></tr>' +
+            '</tbody></table>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+    }
+
+    function formHTML2(region, v1, v2, v3, v4, v5, v6) {
+        return '<div id="content">' +
+            '<div id="siteNotice">' +
+            '</div>' +
+            '<h3 id="firstHeading" class="firstHeading">' + region + '</h3>' +
+            '<div id="bodyContent d1" style="text-align: left">' +
+            '<p><b>Викиди в атмосферне повітря</b></p>' +
+            '<ul class="nav nav-tabs" id="myTab" role="tablist">\n' +
+            '  <li class="nav-item">\n' +
+            '    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">2019</a>\n' +
+            '  </li>\n' +
+            '  <li class="nav-item">\n' +
+            '    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">2018</a>\n' +
+            '  </li>\n' +
+            '  <li class="nav-item">\n' +
+            '    <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="false">2017</a>\n' +
+            '  </li>\n' +
+            '  <li class="nav-item">\n' +
+            '    <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">2016</a>\n' +
+            '  </li>\n' +
+            '</ul>\n' +
+            '\n' +
+            '<!-- Tab panes -->\n' +
+            '<div class="tab-content">\n' +
+            '  <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">' +
+            '<table class="tableizer-table">' +
+            '<thead><tr class="tableizer-firstrow"><th>Речовини</th><th>Кількисть викидів (т)</th></tr></thead><tbody>' +
+            '<tr><td>метали</td><td>' + v1 + '</td></tr>' +
+            '<tr><td>оксид азоту</td><td>' + v2 + '</td></tr>' +
+            '<tr><td>аміак</td><td>' + v3 + '</td></tr>' +
+            '<tr><td>діоксид сірки</td><td>' + v4 + '</td></tr>' +
+            '<tr><td>оксид вуглецю</td><td>' + v5 + '</td></tr>' +
+            '<tr><td>метан</td><td>' + v6 + '</td></tr>' +
+            '</tbody></table>' +
+            '</div>\n' +
+            '  <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">' +
+            '<table class="tableizer-table">' +
+            '<thead><tr class="tableizer-firstrow"><th>Речовини</th><th>Кількисть викидів (т)</th></tr></thead><tbody>' +
+            '<tr><td>метали</td><td>' + 44 + '</td></tr>' +
+            '<tr><td>оксид азоту</td><td>' + 33 + '</td></tr>' +
+            '<tr><td>аміак</td><td>' + 11 + '</td></tr>' +
+            '<tr><td>діоксид сірки</td><td>' + 123 + '</td></tr>' +
+            '<tr><td>оксид вуглецю</td><td>' + 23 + '</td></tr>' +
+            '<tr><td>метан</td><td>' + 44 + '</td></tr>' +
+            '</tbody></table>' +
+            '</div>\n' +
+            '  <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">' +
+            '<table class="tableizer-table">' +
+            '<thead><tr class="tableizer-firstrow"><th>Речовини</th><th>Кількисть викидів (т)</th></tr></thead><tbody>' +
+            '<tr><td>метали</td><td>' + 8989 + '</td></tr>' +
+            '<tr><td>оксид азоту</td><td>' + 556 + '</td></tr>' +
+            '<tr><td>аміак</td><td>' + 444 + '</td></tr>' +
+            '<tr><td>діоксид сірки</td><td>' + 911 + '</td></tr>' +
+            '<tr><td>оксид вуглецю</td><td>' + 1228 + '</td></tr>' +
+            '<tr><td>метан</td><td>' + 1998 + '</td></tr>' +
+            '</tbody></table>' +
+            '</div>\n' +
+            '  <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">' +
+            '<table class="tableizer-table">' +
+            '<thead><tr class="tableizer-firstrow"><th>Речовини</th><th>Кількисть викидів (т)</th></tr></thead><tbody>' +
+            '<tr><td>метали</td><td>' + 838 + '</td></tr>' +
+            '<tr><td>оксид азоту</td><td>' + 19222 + '</td></tr>' +
+            '<tr><td>аміак</td><td>' + 2877 + '</td></tr>' +
+            '<tr><td>діоксид сірки</td><td>' + 7777 + '</td></tr>' +
+            '<tr><td>оксид вуглецю</td><td>' + 1122 + '</td></tr>' +
+            '<tr><td>метан</td><td>' + 1922 + '</td></tr>' +
+            '</tbody></table>' +
+            '</div>\n' +
+            '</div>';
+    }
+
+    function createMarker(lat, lng, contentOfInfo, map) {
+        var infoWindow = new google.maps.InfoWindow;
+        var marker = new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
+        marker.addListener('click', function () {
+            infoWindow.setContent(contentOfInfo);
+            infoWindow.open(map, marker);
+        });
+    }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDspVrhTjwzm-NEAMVkDGL8CHpXZuVsb08&callback=initMap">
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta name="description" content="spring-boot thymeleaf | home ">
+    <div th:replace="fragments/header :: header-css"></div>
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/site.css}"/>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+
+    <div class="row header">
+        <div class="row header-row">
+            <a href="/">
+                <img src="icons/logo.png">
+                <h2>Оцінка ризику здоров'я населення від забруднення атмосферного повітря</h2>
+            </a>
+        </div>
+    </div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+               aria-selected="true">Неконцерогенні речовини</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+               aria-selected="false">Концерогенні речовини</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content container-of-forms">
+        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <table class="table">
+                    <thead>
+                    <tr class="tableizer-firstrow">
+                        <th>id</th>
+                        <th>Речовина</th>
+                        <th>Rfc, мг/м3</th>
+                        <th>RfD, мг/кг</th>
+                        <th>Критичні органи</th>
+                        <th>Дія</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="substance : ${substances}">
+                        <form method="post" th:id="'non-conc-form-amount' + ${substance.id}" th:action="@{/update-substance-info}">
+                        <tr>
+                            <td th:text="${substance.id}"></td>
+                            <td th:text="${substance.name}"></td>
+                            <td>
+                                <input type="number" class="form-control" name="rfc" placeholder="0.01"
+                                       step="0.00000001" aria-label="dose"
+                                       aria-describedby="basic-addon1"  th:value="${substance.rfc}">
+                                <input type="hidden" class="form-control" name="id" th:value="${substance.id}">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="rfd" placeholder="0.01"
+                                       step="0.00000001" aria-label="dose"
+                                       aria-describedby="basic-addon1"  th:value="${substance.rfd}">
+                            </td>
+                            <td th:text="${substance.toStringCriticalOrgans()}"></td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Зберегти</button>
+                            </td>
+                        </tr>
+                        </form>
+                    </th:block>
+                    <form method="post" id="save-substnace-form-amount" th:action="@{/save-substance-info}"></form>
+                    <form method="post" id="save-organs-form-amount" th:action="@{/save-substance-organs-info}"></form>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <input type="text" class="form-control" name="name" placeholder="Речовина"
+                                       aria-describedby="basic-addon1" form="save-substnace-form-amount">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="rfc" placeholder="0.01"
+                                       step="0.00000001" aria-label="rfc"
+                                       aria-describedby="basic-addon1" form="save-substnace-form-amount">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="rfd" placeholder="0.01"
+                                       step="0.00000001" aria-label="rfd"
+                                       aria-describedby="basic-addon1" form="save-substnace-form-amount">
+                                <input id="chorgans" type="hidden" class="form-control" name="chosenOrgans" th:name="chosenOrgans" th:value="${chosenOrgans}" form="save-substnace-form-amount">
+                            </td>
+                            <td>
+                                <select id="organs" class="selectpicker" multiple data-live-search="true" th:name="chosenOrgans" title="Критичні органи не вибрані" form="save-organs-form-amount">
+                                    <th:block th:each="organ : ${organs}">
+                                        <option th:text="${organ.name}"></option>
+                                    </th:block>
+                                </select>
+                                <button type="submit" class="btn btn-primary" form="save-organs-form-amount">+</button>
+                                </form>
+                            </td>
+                            <td>
+                                <button id="savebtn" type="submit" disabled class="btn btn-primary" form="save-substnace-form-amount">Додати</button>
+                            </td>
+                        </tr>
+                   </form>
+                    </tbody>
+                </table>
+        </div>
+        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <table class="table">
+                    <thead>
+                    <tr class="tableizer-firstrow">
+                        <th>id</th>
+                        <th>Речовина</th>
+                        <th>SF, мг/(кг × доба)^-1</th>
+                        <th>Дія</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="substance : ${cancerogenSubstances}">
+                        <form method="post" id="form-amount" th:action="@{/update-cancerogen-substance-info}">
+                        <tr>
+                            <td th:text="${substance.id}"></td>
+                            <td th:text="${substance.name}"></td>
+                            <td>
+                                <input type="number" class="form-control" name="sf" placeholder="0.01"
+                                       step="0.00000001" aria-label="dose"
+                                       aria-describedby="basic-addon1"  th:value="${substance.sf}">
+                                <input type="hidden" class="form-control" name="id" th:value="${substance.id}">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Зберегти</button>
+                            </td>
+                        </tr>
+                        </form>
+                    </th:block>
+                        <form method="post" id="save-form-amount" th:action="@{/save-cancerogen-substance-info}">
+                        <tr>
+                            <td></td>
+                            <td>
+                                <input type="text" class="form-control" name="name" placeholder="Речовина"
+                                       aria-describedby="basic-addon1">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="sf" placeholder="0.01"
+                                       step="0.00000001" aria-label="dose"
+                                       aria-describedby="basic-addon1">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Додати</button>
+                            </td>
+                        </tr>
+                        </form>
+                    </tbody>
+                </table>
+
+        </div>
+    </div>
+
+
+</div>
+<footer>
+    <div class="separator" th:replace="fragments/footer :: footer"></div>
+</footer>
+</body>
+<script>
+    (function ($) {
+        if (document.location.href.indexOf('update-cancerogen-substance-info') > -1) {
+            // indexOf will return the position of the first occurence of this string in the url
+            // or -1 it it's not there.
+            $("a[href='" + "#profile" + "']").tab("show");
+        }if (document.location.href.indexOf('save-cancerogen-substance-info') > -1) {
+            // indexOf will return the position of the first occurence of this string in the url
+            // or -1 it it's not there.
+            $("a[href='" + "#profile" + "']").tab("show");
+        }
+
+    }(jQuery));
+
+    (function ($) {
+        var $form = $('#save-organs-form-amount');
+        $form.on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'post',
+                data: $form.serialize(),
+                success: function (response) {
+                    console.log(response);
+                    $('#chorgans').val(response);
+                    $('#savebtn').prop( "disabled", false );
+                }
+            });
+        })
+    }(jQuery));
+
+</script>
+</html>

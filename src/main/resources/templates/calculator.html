@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta name="description" content="spring-boot thymeleaf | home ">
+    <div th:replace="fragments/header :: header-css"></div>
+
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/site.css}"/>
+
+
+</head>
+<body>
+<div class="container">
+
+    <div class="row header">
+        <div class="row header-row">
+            <a href="/">
+                <img src="icons/logo.png">
+                <h2>Оцінка ризику здоров'я населення від забруднення атмосферного повітря</h2>
+            </a>
+        </div>
+    </div>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+               aria-selected="true">Розрахунок неканцерогенного ризику</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+               aria-selected="false">Розрахунок сумарного неканцерогенного ризику (НІ)</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages"
+               aria-selected="false">Розрахунок середню добової дози впливу речовини на населення міста</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content container-of-forms">
+        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+            <form id="non-conc-form" method="post" th:action="@{/calculate-non-conc-assessment}">
+                <div class="form-group">
+                    <label for="substance">Виберіть речовину</label>
+                    <select class="form-control" id="substance" th:name="substance">
+                        <th:block th:each="substance : ${substances}">
+                            <option th:text="${substance.name}"></option>
+                        </th:block>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="concentration">Концентрація в атмосферному повітрі(мг/м3)</label>
+                    <textarea class="form-control text-area" id="concentration" rows="3" th:name="concentration"></textarea>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-primary">Разрахувати</button>
+                    </div>
+                </div>
+            </form>
+            <div id="result-of-assessment1" class="row"></div>
+
+
+            <!-- info button-->
+
+            <div class="box">
+                <button type="button" class="box btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    ?
+                </button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Критерії неканцерогенного ризику</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <thead>
+                                <tr class="tableizer-firstrow">
+                                    <th>Характеристика ризику</th>
+                                    <th>Коефіцієнт небезпеки (HQ)</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Ризик виникнення шкідливих ефектів розглядають як зневажливо малий</td>
+                                    <td>< 1</td>
+                                </tr>
+                                <tr>
+                                    <td>Гранична величина, що не потребує термінових заходів, однак не може розглядатися
+                                        як досить прийнятна
+                                    </td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>Імовірність розвитку шкідливих ефектів зростає пропорційно збільшенню HQ</td>
+                                    <td>> 1</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <form method="post" id="fill-table" th:action="@{/getChosenSubstancesInfo}">
+                <label for="chosen">Виберіть речовину</label>
+                <select id="chosen" class="selectpicker" title="Речовина не вибрана" multiple data-live-search="true" th:name="chosen">
+                    <th:block th:each="substance : ${substances}">
+                        <option th:text="${substance.name}"></option>
+                    </th:block>
+                </select>
+                <button type="submit" class="btn btn-primary">Побудувати таблицю</button>
+            </form>
+
+            <form method="post" id="non-conc-form-amount" th:action="@{/calculate-amount-of-non-conc-assessment}">
+                <table class="table">
+                    <thead>
+                    <tr class="tableizer-firstrow">
+                        <th>Речовина</th>
+                        <th>Доза, мг/кг</th>
+                        <th>RfD, мг/кг</th>
+                        <th>HQ</th>
+                        <th>Критичні органи</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="substance2 : ${chosenSubstances}">
+                        <tr>
+                            <td th:text="${substance2.name}"></td>
+                            <td>
+                                <div class="input-group mb-3">
+                                    <input type="number" class="form-control" name="dose" placeholder="0.01"
+                                           step="0.00000001" aria-label="dose"
+                                           aria-describedby="basic-addon1">
+                                    <input type="hidden" class="form-control" name="id" th:value="${substance2.id}">
+                                </div>
+                            </td>
+                            <td th:text="${substance2.rfd}"></td>
+                            <td th:id="'hq' + ${substance2.id}"></td>
+                            <td th:text="${substance2.toStringCriticalOrgans()}"></td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+
+                <div th:if="${btnCalculate}">
+                    <button type="submit" id="btn-calculate-true" class="btn btn-primary">Розрахувати</button>
+                </div>
+                <!-- ELSE -->
+                <div th:unless="${btnCalculate}">
+                    <button type="submit" id="btn-calculate-false" disabled class="btn btn-primary">Розрахувати</button>
+                </div>
+
+            </form>
+            <div id="result-of-assessment2" class="row"></div>
+
+            <!-- info button-->
+
+            <div class="box">
+                <button type="button" class="box btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
+                    ?
+                </button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel2">Критерії неканцерогенного ризику</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <thead>
+                                <tr class="tableizer-firstrow">
+                                    <th>Характеристика ризику</th>
+                                    <th>Коефіцієнт небезпеки (HQ)</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Ризик виникнення шкідливих ефектів розглядають як зневажливо малий</td>
+                                    <td>< 1</td>
+                                </tr>
+                                <tr>
+                                    <td>Гранична величина, що не потребує термінових заходів, однак не може розглядатися
+                                        як досить прийнятна
+                                    </td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>Імовірність розвитку шкідливих ефектів зростає пропорційно збільшенню HQ</td>
+                                    <td>> 1</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+            <form id="average-daily-dose-form" method="post" th:action="@{/average-daily-dose}">
+                <div class="form-group">
+                    <label for="substance">Виберіть канцерогенову речовину</label>
+                    <select class="form-control" th:name="substance">
+                        <th:block th:each="substance : ${cancerogenSubstances}">
+                            <option th:text="${substance.name}"></option>
+                        </th:block>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="concentration1">Концентрація в атмосферному повітрі(мг/м3)</label>
+                    <textarea class="form-control text-area" id="concentration1" rows="3" th:name="concentration1"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="numOfPeoples">Кількість людей в досліджуваному місті</label>
+                    <textarea class="form-control text-area" id="numOfPeoples" rows="3" th:name="numOfPeoples"></textarea>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-primary">Разрахувати</button>
+                    </div>
+                </div>
+            </form>
+            <div id="result-of-assessment3" class="row"></div>
+
+
+            <!-- info button-->
+
+            <div class="box">
+                <button type="button" class="box btn btn-primary" data-toggle="modal" data-target="#exampleModal1">
+                    ?
+                </button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel1">Класифікація рівнів ризику</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="tableizer-table">
+                                <thead>
+                                <tr class="tableizer-firstrow">
+                                    <th>Рівень ризику</th>
+                                    <th>Ризик протягом життя</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Високий (De Manifestis) - не прийнятний для виробничих умов і населення.
+                                        Необхідне здійснення заходів з усунення або зниження ризику
+                                    </td>
+                                    <td>>10^-3</td>
+                                </tr>
+                                <tr>
+                                    <td>Середній - припустимий для виробничих умов; за впливу на все населення
+                                        необхідний динамічний контроль і поглиблене вивчення джерел і можливих наслідків
+                                        шкідливих впливів для вирішення питання про заходи з управління ризиком
+                                    </td>
+                                    <td>10^-3 - 10^-4</td>
+                                </tr>
+                                <tr>
+                                    <td>Низький - припустимий ризик (рівень, на якому, як правило, встановлюються
+                                        гігієнічні нормативи для населення)
+                                    </td>
+                                    <td>10^-4 - 10^-6</td>
+                                </tr>
+                                <tr>
+                                    <td>Мінімальний (De Minimis) - бажана (цільова) величина ризику при проведенні
+                                        оздоровчих і природоохоронних заходів
+                                    </td>
+                                    <td><10^-6</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<footer>
+    <div class="separator" th:replace="fragments/footer :: footer"></div>
+</footer>
+
+</body>
+<script>
+    (function ($) {
+        if (document.location.href.indexOf('getChosenSubstancesInfo') > -1) {
+
+            $("a[href='" + "#profile" + "']").tab("show");
+        }
+    }(jQuery));
+
+    (function ($) {
+        $(".text-area").keydown(function (event) {
+            if (event.shiftKey == true) {
+                event.preventDefault();
+            }
+
+            if ((event.keyCode >= 48 && event.keyCode <= 57) ||
+                (event.keyCode >= 96 && event.keyCode <= 105) ||
+                event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
+                event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190) {
+
+            } else {
+                event.preventDefault();
+            }
+
+            if($(this).val().indexOf('.') !== -1 && event.keyCode == 190)
+                event.preventDefault();
+
+        });
+    }(jQuery));
+
+    (function ($) {
+        var $form = $('#non-conc-form');
+        $form.on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'post',
+                data: $form.serialize(),
+                success: function (response) {
+                    console.log(response);
+                    $('#result-of-assessment1').text(response);
+                }
+            });
+        })
+    }(jQuery));
+
+    (function ($) {
+        var $form = $('#average-daily-dose-form');
+        $form.on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'post',
+                data: $form.serialize(),
+                success: function (response) {
+                    console.log(response);
+                    $('#result-of-assessment3').text(response);
+                }
+            });
+        })
+    }(jQuery));
+
+    (function ($) {
+        var $form = $('#non-conc-form-amount');
+        $form.on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'post',
+                data: $form.serialize(),
+                success: function (response) {
+                    console.log(response);
+                    var json = JSON.parse(response);
+                    var result = parseJsonResultAndCreateHtml(json);
+                    console.log(result);
+                    $('#result-of-assessment2').html(result);
+                    for (var key in json.HQ) {
+                        $('#' + key).text(json.HQ[key]);
+                    }
+                }
+            });
+        })
+    }(jQuery));
+
+    function parseJsonResultAndCreateHtml(jsonResult) {
+        return "<table class=\"table\"> " +
+            "<thead><tr><th>Сумарний ризик</th><th>НІ загальний</th><th>" + jsonResult["hqGeneral"] + "</th></tr></thead><tbody>" +
+            getHtmlByOrgans(jsonResult) +
+            "</tbody></table>";
+    }
+
+    function getHtmlByOrgans(jsonResult) {
+        var string = "";
+        for (var key in jsonResult.HQorgans) {
+            string += "<tr><td></td><td>" + "HI " + key + "</td><td>" + jsonResult.HQorgans[key] + "</td></tr>";
+        }
+        return string;
+    }
+</script>
+</html>
